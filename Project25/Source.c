@@ -10,7 +10,7 @@
 //typedef struct {
 //	int taskId;
 //	char* description;
-//	Date endDate;
+//	Date CompletionDate;
 //	Date finishDate;
 //
 //}Task;
@@ -195,7 +195,7 @@
 //
 //		task.taskId = atoi(tokens[0]);
 //		task.description = strdup(tokens[1]);
-//		task.endDate = stringToDate(tokens[2]);
+//		task.CompletionDate = stringToDate(tokens[2]);
 //		task.finishDate = stringToDate(tokens[3]);
 //
 //		root = insert(root, task);
@@ -274,7 +274,7 @@
 //	task.description = strdup(description);
 //
 //	printf("Enter End Date (dd mm yyyy): ");
-//	scanf("%d %d %d", &task.endDate.day, &task.endDate.month, &task.endDate.year);
+//	scanf("%d %d %d", &task.CompletionDate.day, &task.CompletionDate.month, &task.CompletionDate.year);
 //
 //	printf("Enter Finish Date (dd mm yyyy): ");
 //	scanf("%d %d %d", &task.finishDate.day, &task.finishDate.month, &task.finishDate.year);
@@ -295,7 +295,7 @@
 //}
 //void constructTask(Task* task,int id, char* str, Date end, Date finish) {
 //	task->taskId = id;
-//	constructDate(&task->endDate, end);
+//	constructDate(&task->CompletionDate, end);
 //	constructDate(&task->finishDate, finish);
 //	task->description = (char*)malloc(strlen(str) + 1);
 //	assert(task->description);
