@@ -12,6 +12,6 @@ typedef struct {
 typedef struct {
 	int taskId;
 	char* description;
-	Date endDate;
+	Date CompletionDate;
 	Date finishDate;
 } Task;

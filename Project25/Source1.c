@@ -17,7 +17,7 @@ typedef struct {
 typedef struct {
 	int taskId;
 	char* description;
-	Date endDate;// the date the task was completed
+	Date CompletionDate;// the date the task was completed
 	Date finishDate;//the date for when the task should be completed
 } Task;
 
@@ -108,7 +108,7 @@ void enqueue(Queue* queue, Task task) {
 		return;
 	}
 	
-	constructTask(&newNode->task, task.taskId, task.description, task.endDate, task.finishDate);
+	constructTask(&newNode->task, task.taskId, task.description, task.CompletionDate, task.finishDate);
 	newNode->next = NULL;
 
 	if (isEmptyQ(queue)) {
@@ -135,7 +135,7 @@ void enqueueAtPosition(Queue* queue, Task task, int position) {
 		printf("Memory allocation failed.\n");
 		return;
 	}
-	constructTask(&newNode->task, task.taskId, task.description, task.endDate, task.finishDate);
+	constructTask(&newNode->task, task.taskId, task.description, task.CompletionDate, task.finishDate);
 
 	if (isEmptyQ(queue) || position == 1) {
 		newNode->next = queue->front;
@@ -172,7 +172,7 @@ void ViewPrioritizedTasks(Queue* queue) {
 	while (current != NULL) {
 		printf("Task ID: %d, Description: %s, End Date: %02d/%02d/%04d, Finish Date: %02d/%02d/%04d\n",
 			current->task.taskId, current->task.description,
-			current->task.endDate.day, current->task.endDate.month, current->task.endDate.year,
+			current->task.CompletionDate.day, current->task.CompletionDate.month, current->task.CompletionDate.year,
 			current->task.finishDate.day, current->task.finishDate.month, current->task.finishDate.year);
 		current = current->next;
 	}
@@ -190,7 +190,7 @@ void constructDate(Date* date, Date input) {
 }
 void constructTask(Task* task,int id, char* str, Date end, Date finish) {
 	task->taskId = id;
-	constructDate(&task->endDate, end);
+	constructDate(&task->CompletionDate, end);
 	constructDate(&task->finishDate, finish);
 	task->description = (char*)malloc(strlen(str) + 1);
 	assert(task->description);
@@ -206,10 +206,10 @@ TreeNode* createNode(Task task) {
 		printf("Memory allocation failed!\n");
 		exit(1);
 	}
-	constructTask(&newNode->task, task.taskId, task.description, task.endDate, task.finishDate);
-	newNode->task.endDate.month = 0;
-	newNode->task.endDate.day = 0;
-	newNode->task.endDate.year = 0;
+	constructTask(&newNode->task, task.taskId, task.description, task.CompletionDate, task.finishDate);
+	newNode->task.CompletionDate.month = 0;
+	newNode->task.CompletionDate.day = 0;
+	newNode->task.CompletionDate.year = 0;
 	newNode->left = NULL;
 	newNode->right = NULL;
 	return newNode;
@@ -282,7 +282,7 @@ void push(Stack* stack, Task task) {
 		printf("Memory allocation failed!\n");
 		exit(1);
 	}
-	constructTask(&newNode->task, task.taskId, task.description, task.endDate, task.finishDate);
+	constructTask(&newNode->task, task.taskId, task.description, task.CompletionDate, task.finishDate);
 	
 	newNode->next = stack->top;
 	stack->top = newNode;
@@ -307,7 +307,7 @@ int isEmpty(Stack* stack) {
 void inorderTraversalWriteToFile(TreeNode* root, FILE* file) {
 	if (root != NULL) {
 		inorderTraversalWriteToFile(root->left, file);
-		fprintf(file, "%d,%s,%02d/%02d/%04d,%02d/%02d/%04d\n", root->task.taskId, root->task.description, root->task.endDate.day, root->task.endDate.month, root->task.endDate.year, root->task.finishDate.day, root->task.finishDate.month, root->task.finishDate.year);
+		fprintf(file, "%d,%s,%02d/%02d/%04d,%02d/%02d/%04d\n", root->task.taskId, root->task.description, root->task.CompletionDate.day, root->task.CompletionDate.month, root->task.CompletionDate.year, root->task.finishDate.day, root->task.finishDate.month, root->task.finishDate.year);
 		inorderTraversalWriteToFile(root->right, file);
 	}
 }
@@ -339,7 +339,7 @@ void fillStackFromFile(Stack* stack) {
 		Task task;
 		// Assuming the format of each line in CompletedTasks.txt is: TaskID,Description,EndDate,FinishDate
 		sscanf(line, "%d,%99[^,],%d/%d/%d,%d/%d/%d", &task.taskId, description,
-			&task.endDate.day, &task.endDate.month, &task.endDate.year,
+			&task.CompletionDate.day, &task.CompletionDate.month, &task.CompletionDate.year,
 			&task.finishDate.day, &task.finishDate.month, &task.finishDate.year);
 		task.description = description;
 		push(stack, task);
@@ -368,7 +368,7 @@ TreeNode* readTasksFromFile(const char* filename, TreeNode* root) { //Load Tasks
 
 		task.taskId = atoi(tokens[0]);   //change functions or add explination 
 		task.description = _strdup(tokens[1]);
-		constructDate(&task.endDate, stringToDate(tokens[2]));
+		constructDate(&task.CompletionDate, stringToDate(tokens[2]));
 		constructDate(&task.finishDate, stringToDate(tokens[3]));
 		
 
@@ -394,7 +394,7 @@ TreeNode* AddTask(TreeNode* root) {
 	task.description = _strdup(description);
 
 	//printf("Enter End Date (dd mm yyyy): ");
-	//scanf("%d %d %d", &task.endDate.day, &task.endDate.month, &task.endDate.year);
+	//scanf("%d %d %d", &task.CompletionDate.day, &task.CompletionDate.month, &task.CompletionDate.year);
 
 	printf("Enter Finish Date (dd mm yyyy): ");
 	scanf("%d %d %d", &task.finishDate.day, &task.finishDate.month, &task.finishDate.year);
@@ -448,7 +448,7 @@ Date stringToDate(char* str) {
 void inorderTraversal(TreeNode* root) {
 	if (root != NULL) {
 		inorderTraversal(root->left);
-		printf("Task ID: %d, Description: %s, Finish Date: %02d/%02d/%04d\n", root->task.taskId, root->task.description, root->task.finishDate.day, root->task.finishDate.month, root->task.finishDate.year);
+		printf("%d\t   %02d/%02d/%04d \t%s,\n", root->task.taskId, root->task.finishDate.day, root->task.finishDate.month, root->task.finishDate.year, root->task.description);
 		inorderTraversal(root->right);
 	}
 }
@@ -500,7 +500,7 @@ void CompleteTask(TreeNode** root, Stack* stack, Date completionDate, int taskId
 	}
 
 	// Update the finish date of the task
-	constructDate(&node->task.endDate ,completionDate);
+	constructDate(&node->task.CompletionDate ,completionDate);
 	
 
 	// Move the task to the stack
@@ -513,6 +513,7 @@ void CompleteTask(TreeNode** root, Stack* stack, Date completionDate, int taskId
 }
 void ViewAllTasks(TreeNode* root) {
 	printf("All Tasks:\n");
+	printf("ID\t finish date \t description \t\n");
 	inorderTraversal(root);
 }
 void ViewCompletedTasks(Stack* stack) {
@@ -520,7 +521,7 @@ void ViewCompletedTasks(Stack* stack) {
 	StackNode* current = stack->top;
 	while (current != NULL) {
 		Task task;
-		constructTask(&task, current->task.taskId, current->task.description, current->task.endDate, current->task.finishDate);
+		constructTask(&task, current->task.taskId, current->task.description, current->task.CompletionDate, current->task.finishDate);
 		printf("Task ID: %d, Description: %s, Finish Date: %02d/%02d/%04d\n", task.taskId, task.description, task.finishDate.day, task.finishDate.month, task.finishDate.year);
 		current = current->next;
 	}
@@ -532,7 +533,7 @@ void inorderTraversalWithUserInput(TreeNode* root, Queue* queue) {
 	inorderTraversalWithUserInput(root->left, queue);
 
 	Task task;
-	constructTask(&task, root->task.taskId, root->task.description, root->task.endDate, root->task.finishDate); // Assuming each TreeNode contains a Task
+	constructTask(&task, root->task.taskId, root->task.description, root->task.CompletionDate, root->task.finishDate); // Assuming each TreeNode contains a Task
 	int position;
 	printf("Enter priority position for task with ID %d: ", task.taskId);
 	scanf("%d", &position);
@@ -565,7 +566,7 @@ void SavetoFile(TreeNode* root, Stack* stack) {
 	}
 	while (!isEmpty(stack)) {
 		Task task = pop(stack);
-		fprintf(completedTasksFile, "%d,%s,%02d/%02d/%04d,%02d/%02d/%04d\n", task.taskId, task.description, task.endDate.day, task.endDate.month, task.endDate.year, task.finishDate.day, task.finishDate.month, task.finishDate.year);
+		fprintf(completedTasksFile, "%d,%s,%02d/%02d/%04d,%02d/%02d/%04d\n", task.taskId, task.description, task.CompletionDate.day, task.CompletionDate.month, task.CompletionDate.year, task.finishDate.day, task.finishDate.month, task.finishDate.year);
 	}
 	fclose(completedTasksFile);
 
